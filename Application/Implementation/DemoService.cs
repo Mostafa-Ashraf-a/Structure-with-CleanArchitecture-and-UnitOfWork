@@ -8,10 +8,12 @@ using Shared.Enums;
 
 namespace MostafaProject.Application.Implementation
 {
-    public class DemoService : BaseService<Demo>, IDemoService
+    public class DemoService : BaseService, IDemoService
     {
-        public DemoService(IUnitOfWork unitOfWork, IGenericRepository<Demo> repo, IMapper mapper) : base(unitOfWork, repo, mapper)
+        IGenericRepository<Demo> _repo;
+        public DemoService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
         {
+            _repo = _unitOfWork.GetRepository<Demo>();
         }
 
         public async Task<KeyValuePair<ResponseEnum, object>> CreateNewDemo(AddDemoDto add)
@@ -50,6 +52,20 @@ namespace MostafaProject.Application.Implementation
             {
                 return new(ResponseEnum.Error, HandleException(ex));
             }
+        }
+
+        public async Task<KeyValuePair<ResponseEnum, object>> GetAll()
+        {
+            try
+            {
+                return new KeyValuePair<ResponseEnum, object>(ResponseEnum.OK, await _repo.GetAllAsync());
+            }
+            catch (Exception ex)
+            {
+                return new KeyValuePair<ResponseEnum, object>(ResponseEnum.Error, $"Error = {ex.Message}\n{ex.InnerException}");
+                
+            }
+            
         }
     }
 }

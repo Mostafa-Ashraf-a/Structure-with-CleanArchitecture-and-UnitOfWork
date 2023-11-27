@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MostafaProject.Domain\MostafaProject.Domain.csproj" />
     <ProjectReference Include="..\MostafaProject.Infrastructure\MostafaProject.infrastructure\MostafaProject.infrastructure.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>

@@ -11,17 +11,15 @@ using System.Threading.Tasks;
 
 namespace MostafaProject.Application.Implementation
 {
-    public class BaseService<TEntity> where TEntity : BaseEntity
+    public class BaseService
     {
         public IMapper _mapper { get; }
         public IUnitOfWork _unitOfWork { get; }
-        public IGenericRepository<TEntity> _repo { get; }
 
         //protected readonly ICurrentUser _currentUser;
-        public BaseService(IUnitOfWork unitOfWork, IGenericRepository<TEntity> repo, IMapper mapper)
+        public BaseService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            _repo = repo;
             _mapper = mapper;
         }
         protected string HandleException(Exception ex)

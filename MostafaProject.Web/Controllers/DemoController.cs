@@ -18,14 +18,14 @@ namespace MostafaProject.Web.Controllers
             this._demoService = demoService;
         }
         // GET: api/<DemoController>
-        [HttpGet]
-        public Task<IActionResult> Get()
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> Get()
         {
-            throw new NotImplementedException();
+            return BaseResponseHandler(await _demoService.GetAll());
         }
 
         // GET api/<DemoController>/5
-        [HttpGet("{id}")]
+        [HttpGet("GetById{id}")]
         public Task<IActionResult> Get(int id)
         {
             throw new NotImplementedException();
