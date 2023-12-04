@@ -24,7 +24,15 @@ namespace MostafaProject.infrastructure.Implementation
         {
             return _dbSet.AddRangeAsync(entites);
         }
-
+        /// <summary>
+        /// used if you want to search on entity in database
+        /// </summary>
+        /// <param name="filterPredicate">Filter</param>
+        /// <param name="Include"></param>
+        /// <param name="asNoTracking"></param>
+        /// <param name="select"></param>
+        /// <param name="asSplit"></param>
+        /// <returns>A single entity from EF</returns>
         public Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> filterPredicate, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? Include = null, bool asNoTracking = false,
             Expression<Func<TEntity, TEntity>>? select = null,
            bool asSplit = false)
@@ -46,8 +54,17 @@ namespace MostafaProject.infrastructure.Implementation
             return query.FirstOrDefaultAsync();
 
         }
+        public Task<IEnumerable<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null)
+        {
+            var query = _dbSet.AsQueryable();
 
-        public Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> filterPredicate,
+            if (orderBy is not null)
+                query = orderBy(query);
+
+            return (Task<IEnumerable<TEntity>>)query.Where(a => !a.Is_Deleted).AsAsyncEnumerable();
+        }
+
+        public Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> filterPredicate,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity,
                 object>>? Include = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
             Expression<Func<TEntity, TEntity>>? select = null, int? take = null)
@@ -66,52 +83,21 @@ namespace MostafaProject.infrastructure.Implementation
             //added to enhance performance
             query = query.Take(300);
 
-            return query.ToListAsync();
+            return (Task<IEnumerable<TEntity>>)query.AsAsyncEnumerable();
         }
 
-        public void Remove(TEntity entity)
-        {
-
-            _dbSet.Remove(entity);
-        }
-        public void RemoveRange(IEnumerable<TEntity> entites)
-        {
-            _dbSet.RemoveRange(entites);
-        }
-        public void Update(TEntity entity)
-        {
-            _dbSet.Update(entity);
-        }
-        public void Delete(TEntity entity)
-        {
-            entity.Is_Deleted = true;
-        }
-        public async Task DeleteAsync(Guid id)
-        {
-            var entity = await FindAsync(a => a.Id == id);
-            entity.Is_Deleted = true;
-        }
-        public Task<int> SaveChangesAsync()
-        {
-            return _dbContext.SaveChangesAsync();
-        }
-
-        public Task<bool> IsExists(Expression<Func<TEntity, bool>> filterPredicate)
-        {
-            return _dbSet.Where(a => !a.Is_Deleted).AnyAsync(filterPredicate);
-        }
-
-        public Task<List<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null)
+        public async Task<IQueryable<TEntity>> GetAllQueryableAsync(Expression<Func<TEntity, bool>> filterPredicate, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> Include = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null)
         {
             var query = _dbSet.AsQueryable();
 
+            if (Include is not null)
+                query = Include(query);
             if (orderBy is not null)
                 query = orderBy(query);
 
-            return query.Where(a => !a.Is_Deleted).ToListAsync();
+            return await Task.FromResult(query.Where(a => !a.Is_Deleted).Where(filterPredicate));
         }
-
-        public async Task<(List<TEntity>, int)> GetPaginatedAsync(Expression<Func<TEntity, bool>>? filterPredicate = null, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? Include = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, Pagination? pagentation = null,
+        public async Task<(IEnumerable<TEntity>, int)> GetPaginatedAsync(Expression<Func<TEntity, bool>>? filterPredicate = null, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? Include = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, Pagination? pagentation = null,
             Expression<Func<TEntity, TEntity>>? select = null, bool asSplit = false)
         {
             int count = 0;
@@ -136,18 +122,24 @@ namespace MostafaProject.infrastructure.Implementation
             return (await query.ToListAsync(), count);
         }
 
-        public async Task<IQueryable<TEntity>> GetAllQueryableAsync(Expression<Func<TEntity, bool>> filterPredicate, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> Include = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null)
+
+        public void Update(TEntity entity)
         {
-            var query = _dbSet.AsQueryable();
-
-            if (Include is not null)
-                query = Include(query);
-            if (orderBy is not null)
-                query = orderBy(query);
-
-            return await Task.FromResult(query.Where(a => !a.Is_Deleted).Where(filterPredicate));
+            _dbSet.Update(entity);
         }
+        public void Remove(TEntity entity)
+        {
 
+            _dbSet.Remove(entity);
+        }
+        public void RemoveRange(IEnumerable<TEntity> entites)
+        {
+            _dbSet.RemoveRange(entites);
+        }
+        public Task<bool> IsExists(Expression<Func<TEntity, bool>> filterPredicate)
+        {
+            return _dbSet.Where(a => !a.Is_Deleted).AnyAsync(filterPredicate);
+        }
         public Task<int> MaxAsync(Expression<Func<TEntity, int>> filterPredicate, Expression<Func<TEntity, bool>>? filter = null)
         {
 
@@ -160,7 +152,6 @@ namespace MostafaProject.infrastructure.Implementation
                 .DefaultIfEmpty()
                 .MaxAsync();
         }
-
         public Task<ulong> MaxAsync(Expression<Func<TEntity, ulong>> filterPredicate, Expression<Func<TEntity, bool>>? filter = null)
         {
 
@@ -173,6 +164,22 @@ namespace MostafaProject.infrastructure.Implementation
                 .DefaultIfEmpty()
                 .MaxAsync();
         }
+        public void Delete(TEntity entity)
+        {
+            entity.Is_Deleted = true;
+        }
+        public async Task DeleteAsync(Guid id)
+        {
+            var entity = await FindAsync(a => a.Id == id);
+            entity.Is_Deleted = true;
+        }
+        public Task<int> SaveChangesAsync()
+        {
+            return _dbContext.SaveChangesAsync();
+        }
+
+
+
 
         
     }

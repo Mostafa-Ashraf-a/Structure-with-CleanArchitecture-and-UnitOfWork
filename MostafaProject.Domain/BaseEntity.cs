@@ -7,7 +7,7 @@ namespace MostafaProject.Domain
     {
         [Key]
         public Guid Id { get; set; } = new Guid();
-        public DateTime Created_At { get; set; }
+        public DateTime Created_At { get; set; } = DateTime.Now;
         public Guid Created_by { get; set; } = Guid.Empty;
         public DateTime? Modified_At { get; set; }
         public Guid? Modified_by { get; set; } = null;

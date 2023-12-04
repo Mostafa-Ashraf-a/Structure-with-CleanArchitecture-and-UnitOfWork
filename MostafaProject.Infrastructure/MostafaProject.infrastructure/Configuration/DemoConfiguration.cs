@@ -5,9 +5,9 @@ using MostafaProject.infrastructure.Interface;
 
 namespace MostafaProject.infrastructure.Configuration
 {
-    public class DemoConfiguration : BaseConfiguration<Demo> , IEntityConfiguration
+    public class DemoConfiguration : BaseConfiguration<Book> , IEntityConfiguration
     {
-        public override void Configure(EntityTypeBuilder<Demo> builder)
+        public override void Configure(EntityTypeBuilder<Book> builder)
         {
             base.Configure(builder);
             builder.Property( e => e.Name ).IsRequired()

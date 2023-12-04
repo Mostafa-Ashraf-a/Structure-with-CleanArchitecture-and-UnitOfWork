@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MostafaProject.Application"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{6A3E7AEB-3D26-40A4-A2F7-CB1803B6D0C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MostafaProject.Domain", "MostafaProject.Domain\MostafaProject.Domain.csproj", "{D3C485C2-5359-4856-AA8A-D668834FCAD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MostafaProject.Domain", "MostafaProject.Domain\MostafaProject.Domain.csproj", "{D3C485C2-5359-4856-AA8A-D668834FCAD8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

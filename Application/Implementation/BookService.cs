@@ -1,31 +1,27 @@
-﻿using AutoMapper;
-using MostafaProject.Application.Interfaces;
-using MostafaProject.Domain.Dtos.Demo;
+﻿using MostafaProject.Application.Interfaces;
 using MostafaProject.Domain.Entities;
 using MostafaProject.infrastructure.Interface;
 using MostafaProject.Infrastructure.Interface;
 using Shared.Enums;
-
 namespace MostafaProject.Application.Implementation
 {
-    public class DemoService : BaseService, IDemoService
+    public class BookService : BaseService, IBookService
     {
-        IGenericRepository<Demo> _repo;
-        public DemoService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        IGenericRepository<Book> _repo;
+        public BookService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-            _repo = _unitOfWork.GetRepository<Demo>();
+            _repo = _unitOfWork.GetRepository<Book>();
         }
 
-        public async Task<KeyValuePair<ResponseEnum, object>> CreateNewDemo(AddDemoDto add)
+        public async Task<KeyValuePair<ResponseEnum, object>> CreateNewDemo(Book add)
         {
             try
             {
                 if (add == null)
                     return new(ResponseEnum.Error, "Empty Data");
-                var data = _mapper.Map<Demo>(add);
-                await _repo.AddAsync(data);
+                await _repo.AddAsync(add);
                 var result = await _unitOfWork.SaveChangesAsync();
-                return result > 0 ? new KeyValuePair<ResponseEnum, object>(ResponseEnum.OK, data) :
+                return result > 0 ? new KeyValuePair<ResponseEnum, object>(ResponseEnum.OK, add) :
                     new(ResponseEnum.Error, "Data Not Saved");
             }
             catch (Exception ex)
@@ -35,7 +31,7 @@ namespace MostafaProject.Application.Implementation
             
         }
 
-        public async Task<KeyValuePair<ResponseEnum, object>> Delete(Guid id)
+        public async Task<KeyValuePair<ResponseEnum, object>> Remove(Guid id)
         {
             try
             {

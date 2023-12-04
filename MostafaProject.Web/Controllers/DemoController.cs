@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MostafaProject.Application.Interfaces;
-using MostafaProject.Domain.Dtos.Demo;
+using MostafaProject.Domain.Entities;
 using Shared.Enums;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -11,9 +11,9 @@ namespace MostafaProject.Web.Controllers
     [ApiController]
     public class DemoController : BaseController
     {
-        private readonly IDemoService _demoService;
+        private readonly IBookService _demoService;
 
-        public DemoController(IDemoService demoService)
+        public DemoController(IBookService demoService)
         {
             this._demoService = demoService;
         }
@@ -32,8 +32,8 @@ namespace MostafaProject.Web.Controllers
         }
 
         // POST api/<DemoController>
-        [HttpPost]
-        public async Task<IActionResult> Creat([FromBody] AddDemoDto add)
+        [HttpPost("AddNewDemo")]
+        public async Task<IActionResult> Creat([FromBody] Book add)
         {
             return BaseResponseHandler(await _demoService.CreateNewDemo(add));
         }
@@ -49,7 +49,7 @@ namespace MostafaProject.Web.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromBody] Guid id)
         {
-            return BaseResponseHandler(await _demoService.Delete(id));
+            return BaseResponseHandler(await _demoService.Remove(id));
         }
     }
 }

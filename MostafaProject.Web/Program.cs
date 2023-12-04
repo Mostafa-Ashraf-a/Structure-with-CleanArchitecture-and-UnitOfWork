@@ -2,7 +2,6 @@ using MostafaProject.infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using MostafaProject.Web.Resolver;
 
-using MostafaProject.Application.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,11 +16,10 @@ builder.Services.AddDbContextPool<AppDbContext>(opt =>
 {
     opt.UseSqlServer(connectionString: builder.Configuration.GetConnectionString("DBConnection"));
 });
-builder.Services.AddAutoMapper(typeof(MappingProfileBase));
 // Get All services class Dependency Injection from RegisterService Method 
 builder.Services.RegisterUnitOfWork<AppDbContext>();
-
 builder.Services.AddApplicationServices();
+
 
 var app = builder.Build();
 
