@@ -7,16 +7,24 @@ namespace MostafaProject.infrastructure.Seed
     {
         public static void SetSeed(this ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Demo>().HasData(
-                new Demo
-                {
-                    Id = Guid.NewGuid(),
-                    Created_At = DateTime.Now,
-                    Description = "Demo Discription",
-                    Notes = "Demo Note",
-                    Name = "Demo Name",
-                }
-            );
+            var auther = new Auther
+            {
+                Id = Guid.NewGuid(),
+                Name = "Mostafa",
+
+            };
+            modelBuilder.Entity<Auther>().HasData(auther);
+
+            var book = new Book
+            {
+                Id = Guid.NewGuid(),
+                Name = "Mostafa's Book",
+                Barcode = "68745952314",
+                Description = "Demo Discription",
+                AutherId = auther.Id
+            };
+            modelBuilder.Entity<Book>().HasData(book);
         }
+            
     }
 }

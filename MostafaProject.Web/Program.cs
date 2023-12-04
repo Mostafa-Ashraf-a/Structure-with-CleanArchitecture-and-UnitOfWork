@@ -2,6 +2,7 @@ using MostafaProject.infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using MostafaProject.Web.Resolver;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -15,10 +16,13 @@ builder.Services.AddDbContextPool<AppDbContext>(opt =>
 {
     opt.UseSqlServer(connectionString: builder.Configuration.GetConnectionString("DBConnection"));
 });
+// Get All services class Dependency Injection from RegisterService Method 
+builder.Services.RegisterUnitOfWork<AppDbContext>();
+builder.Services.AddApplicationServices();
+
+
 var app = builder.Build();
 
-// Get All services class Dependency Injection from RegisterService Method 
-builder.Services.AddApplicationServices();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
