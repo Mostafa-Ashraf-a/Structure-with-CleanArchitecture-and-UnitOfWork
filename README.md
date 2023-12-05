@@ -1,4 +1,4 @@
-# MostafaProject
+# MostafaProjects
 This project build on Clean Architecture, using Entity Framwork, Generic Repository and Unit of Work
 
 ## Project Referances
