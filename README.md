@@ -1,5 +1,5 @@
 # MostafaProjects v1
-This project build on Clean Architecture, using Entity Framwork, Generic Repository and Unit of Work
+This project build on Clean Architecture, using Entity Framework, Generic Repository and Unit of Work
 
 ## Project Referances
 
